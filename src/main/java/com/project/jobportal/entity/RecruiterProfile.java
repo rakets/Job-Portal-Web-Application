@@ -37,6 +37,9 @@ public class RecruiterProfile {
 //    @Column(name = "state")
     private String state;
 
+    public RecruiterProfile() {
+    }
+
     public RecruiterProfile(Users users) {
         this.usersId = users;
     }
