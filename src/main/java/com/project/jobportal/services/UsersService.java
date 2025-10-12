@@ -7,6 +7,7 @@ import com.project.jobportal.repository.JobSeekerProfileRepository;
 import com.project.jobportal.repository.RecruiterProfileRepository;
 import com.project.jobportal.repository.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -18,16 +19,23 @@ public class UsersService {
     private final JobSeekerProfileRepository jobSeekerProfileRepository;
     private final RecruiterProfileRepository recruiterProfileRepository;
 
+    //WebSecurityConfig bean
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    public UsersService(UsersRepository usersRepository, JobSeekerProfileRepository jobSeekerProfileRepository, RecruiterProfileRepository recruiterProfileRepository) {
+    public UsersService(UsersRepository usersRepository, JobSeekerProfileRepository jobSeekerProfileRepository, RecruiterProfileRepository recruiterProfileRepository, PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
         this.jobSeekerProfileRepository = jobSeekerProfileRepository;
         this.recruiterProfileRepository = recruiterProfileRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Users addNew(Users users){
         users.setActive(true);
         users.setRegistrationDate(new Date(System.currentTimeMillis()));
+        //encrypt user password during registration
+        users.setPassword(passwordEncoder.encode(users.getPassword()));
+        //-----------
         Users savedUsers = usersRepository.save(users);
         int userTypeId = users.getUserTypeId().getUserTypeId();
         if(userTypeId == 1){
