@@ -7,6 +7,7 @@ import com.project.jobportal.services.UsersService;
 import com.project.jobportal.services.UsersTypeService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import jdk.dynalink.linker.LinkerServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -38,21 +39,27 @@ public class UsersController {
         model.addAttribute("user", new Users());
         return "register";
     }
+//          ???
+//    @PostMapping("/register/new")
+//    public String userRegistration(Users users, Model model){
+//        //---- check if email is already existed ----
+//        Optional<Users> optionalUsers = usersService.getUserByEmail(users.getEmail());
+//        if(optionalUsers.isPresent()){
+//            model.addAttribute("error", "Email already in use");
+//            List<UsersType> usersTypes = usersTypeService.getAll();
+//            model.addAttribute("getAllTypes", usersTypes);
+//            model.addAttribute("user", new Users());
+//            return "register";
+//        }
+//        //----------------
+//        usersService.addNew(users);
+//        return "dashboard";
+//    }
 
     @PostMapping("/register/new")
-    public String userRegistration(Users users, Model model){
-        //---- check if email is already existed ----
-        Optional<Users> optionalUsers = usersService.getUserByEmail(users.getEmail());
-        if(optionalUsers.isPresent()){
-            model.addAttribute("error", "Email already in use");
-            List<UsersType> usersTypes = usersTypeService.getAll();
-            model.addAttribute("getAllTypes", usersTypes);
-            model.addAttribute("user", new Users());
-            return "register";
-        }
-        //----------------
+    public String userRegistration(@Valid Users users){
         usersService.addNew(users);
-        return "dashboard";
+        return "redirect:/dashboard/";
     }
 
     @GetMapping("/login")
