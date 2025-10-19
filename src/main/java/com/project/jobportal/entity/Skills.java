@@ -7,20 +7,20 @@ import jakarta.persistence.*;
 public class Skills {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String experienceLevel;
     private String name;
     private String yearsOfExperience;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "job_seeker_profile")
-    @MapsId
+//    @MapsId
     private JobSeekerProfile jobSeekerProfile;
 
     public Skills() {
     }
 
-    public Skills(int id, String experienceLevel, String name, String yearsOfExperience, JobSeekerProfile jobSeekerProfile) {
+    public Skills(Integer id, String experienceLevel, String name, String yearsOfExperience, JobSeekerProfile jobSeekerProfile) {
         this.id = id;
         this.experienceLevel = experienceLevel;
         this.name = name;
@@ -28,11 +28,11 @@ public class Skills {
         this.jobSeekerProfile = jobSeekerProfile;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
