@@ -6,6 +6,7 @@ import com.project.jobportal.entity.JobSeekerProfile;
 import com.project.jobportal.repository.JobSeekerApplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -24,5 +25,10 @@ public class JobSeekerApplyService {
 
     public List<JobSeekerApply> getJobCandidates(JobPostActivity job){
         return jobSeekerApplyRepository.findByJob(job);
+    }
+
+    @Transactional
+    public void addNew(JobSeekerApply jobSeekerApply) {
+        jobSeekerApplyRepository.save(jobSeekerApply);
     }
 }
