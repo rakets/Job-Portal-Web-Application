@@ -339,6 +339,10 @@ label.large-label {
   background-color: #fb4f14;
   border: none;
 }
+.secondary_button {
+  background-color: #bb6041;
+  border: 1px solid #717171;
+}
 
 #check:checked::before {
   color: #fb4f14;

@@ -74,8 +74,9 @@
                                     </div>
                                 </div>
                                 <div class="row mt-4" >
-                                    <div class="col d-flex justify-content-center">
+                                    <div class="col d-flex justify-content-between">
                                         <button type="submit" id="submit2" name="submit" class="btn btn-primary base_button px-4 py-2">Save</button>
+                                        <button type="button" id="historyBackButton" name="back" class="btn btn-primary secondary_button px-4 py-2">Go back</button>
                                     </div>
                                 </div>
                             </div>
@@ -91,5 +92,9 @@
 <script type="text/javascript" th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
 <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
 <script type="text/javascript" th:src="@{/js/main.js}"></script>
-
+<script>
+$('#historyBackButton').off('click').on('click', () => {
+    history.back();
+})
+</script>
 </html>
