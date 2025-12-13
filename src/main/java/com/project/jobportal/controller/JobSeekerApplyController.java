@@ -26,14 +26,23 @@ public class JobSeekerApplyController {
     private final RecruiterProfileService recruiterProfileService;
     private final JobSeekerProfileService jobSeekerProfileService;
 
+    private final NotificationService notificationService;
+
     @Autowired
-    public JobSeekerApplyController(JobPostActivityService jobPostActivityService, UsersService usersService, JobSeekerApplyService jobSeekerApplyService, JobSeekerSaveService jobSeekerSaveService, RecruiterProfileService recruiterProfileService, JobSeekerProfileService jobSeekerProfileService) {
+    public JobSeekerApplyController(JobPostActivityService jobPostActivityService,
+                                    UsersService usersService,
+                                    JobSeekerApplyService jobSeekerApplyService,
+                                    JobSeekerSaveService jobSeekerSaveService,
+                                    RecruiterProfileService recruiterProfileService,
+                                    JobSeekerProfileService jobSeekerProfileService,
+                                    NotificationService notificationService) {
         this.jobPostActivityService = jobPostActivityService;
         this.usersService = usersService;
         this.jobSeekerApplyService = jobSeekerApplyService;
         this.jobSeekerSaveService = jobSeekerSaveService;
         this.recruiterProfileService = recruiterProfileService;
         this.jobSeekerProfileService = jobSeekerProfileService;
+        this.notificationService = notificationService;
     }
 
     @GetMapping("/job-details-apply/{id}")
@@ -42,26 +51,26 @@ public class JobSeekerApplyController {
         List<JobSeekerApply> jobSeekerApplyList = jobSeekerApplyService.getJobCandidates(jobDetails);
         List<JobSeekerSave> jobSeekerSaveList = jobSeekerSaveService.getJobCandidates(jobDetails);
 
-        Authentication authentication =  SecurityContextHolder.getContext().getAuthentication();
-        if(!(authentication instanceof AnonymousAuthenticationToken)){
-            if(authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))) {
                 RecruiterProfile user = recruiterProfileService.getCurrentRecruiterProfile();
-                if(user != null){
+                if (user != null) {
                     model.addAttribute("applyList", jobSeekerApplyList);
                 }
             } else {
                 JobSeekerProfile user = jobSeekerProfileService.getCurrentSeekerProfile();
-                if(user != null){
+                if (user != null) {
                     boolean exists = false;
                     boolean saved = false;
-                    for(JobSeekerApply jobSeekerApply : jobSeekerApplyList){
-                        if(jobSeekerApply.getUserId().getUserAccountId() == user.getUserAccountId()){
+                    for (JobSeekerApply jobSeekerApply : jobSeekerApplyList) {
+                        if (jobSeekerApply.getUserId().getUserAccountId() == user.getUserAccountId()) {
                             exists = true;
                             break;
                         }
                     }
-                    for(JobSeekerSave jobSeekerSave : jobSeekerSaveList){
-                        if(jobSeekerSave.getUserId().getUserAccountId() == user.getUserAccountId()){
+                    for (JobSeekerSave jobSeekerSave : jobSeekerSaveList) {
+                        if (jobSeekerSave.getUserId().getUserAccountId() == user.getUserAccountId()) {
                             saved = true;
                             break;
                         }
@@ -72,30 +81,58 @@ public class JobSeekerApplyController {
             }
         }
         JobSeekerApply jobSeekerApply = new JobSeekerApply();
-        model.addAttribute("applyJob",  jobSeekerApply);
+        model.addAttribute("applyJob", jobSeekerApply);
 
         model.addAttribute("jobDetails", jobDetails);
         model.addAttribute("user", usersService.getCurrentUserProfile());
         return "job-details";
     }
 
+    //    @PostMapping("job-details/apply/{id}")
+//    public String apply(@PathVariable("id") int id, JobSeekerApply jobSeekerApply){
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        if(!(authentication instanceof AnonymousAuthenticationToken)){
+//            String currentUsername = authentication.getName();
+//            Users user = usersService.findByEmail(currentUsername);
+//            Optional<JobSeekerProfile> seekerProfile = jobSeekerProfileService.getOne(user.getUserId());
+//            JobPostActivity jobPostActivity = jobPostActivityService.getOne(id);
+//            if(seekerProfile.isPresent() && jobPostActivity != null){
+//                jobSeekerApply.setUserId(seekerProfile.get());
+//                jobSeekerApply.setJob(jobPostActivity);
+//                jobSeekerApply.setApplyDate(new Date());
+//                jobSeekerApply.setId(null);
+//            } else {
+//                throw new RuntimeException("User not found");
+//            }
+//            jobSeekerApplyService.addNew(jobSeekerApply);
+//        }
+//        return "redirect:/dashboard/";
+//    }
     @PostMapping("job-details/apply/{id}")
-    public String apply(@PathVariable("id") int id, JobSeekerApply jobSeekerApply){
+    public String apply(@PathVariable("id") int id, JobSeekerApply jobSeekerApply) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if(!(authentication instanceof AnonymousAuthenticationToken)){
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUsername = authentication.getName();
             Users user = usersService.findByEmail(currentUsername);
             Optional<JobSeekerProfile> seekerProfile = jobSeekerProfileService.getOne(user.getUserId());
             JobPostActivity jobPostActivity = jobPostActivityService.getOne(id);
-            if(seekerProfile.isPresent() && jobPostActivity != null){
+
+            if (seekerProfile.isPresent() && jobPostActivity != null) {
+                // существующая логика сохранения JobSeekerApply
                 jobSeekerApply.setUserId(seekerProfile.get());
                 jobSeekerApply.setJob(jobPostActivity);
                 jobSeekerApply.setApplyDate(new Date());
                 jobSeekerApply.setId(null);
+                jobSeekerApplyService.addNew(jobSeekerApply); //сохранение
+
+                // уведомление рекрутера ---
+                String candidateName = seekerProfile.get().getFirstName() + " " + seekerProfile.get().getLastName();
+                notificationService.notifyRecruiterOfNewApplication(jobPostActivity, candidateName);
+                // ----------------------------------------
+
             } else {
                 throw new RuntimeException("User not found");
             }
-            jobSeekerApplyService.addNew(jobSeekerApply);
         }
         return "redirect:/dashboard/";
     }
