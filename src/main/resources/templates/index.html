@@ -38,6 +38,12 @@
         </label>
     </div>
 </nav>
+<!--<h3>Курс валют>-->
+<h3><u>CURRENCY RATES:</u></h3>
+<h3 th:text="'EUR: ' + ${euroRateToPln} + ' PLN'">EUR: 0.00 PLN</h3>
+<h3 th:text="'USD: ' + ${usdRateToPln} + ' PLN'">USD: 0.00 PLN</h3>
+<h3 th:text="'GBP: ' + ${gbpRateToPln} + ' PLN'">GBP: 0.00 PLN</h3>
+
 <form th:action="@{/global-search/}">
     <div class="searchBox">
         <div class="inner">
