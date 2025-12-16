@@ -1,11 +1,11 @@
 package com.project.jobportal.controller;
 
+import com.project.jobportal.dto.RecruiterJobsDto;
 import com.project.jobportal.entity.*;
-import com.project.jobportal.services.JobPostActivityService;
-import com.project.jobportal.services.JobSeekerApplyService;
-import com.project.jobportal.services.JobSeekerSaveService;
-import com.project.jobportal.services.UsersService;
+import com.project.jobportal.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Date;
@@ -30,6 +31,9 @@ public class JobPostActivityController {
     private final JobPostActivityService jobPostActivityService;
     private final JobSeekerApplyService jobSeekerApplyService;
     private final JobSeekerSaveService jobSeekerSaveService;
+
+    @Autowired
+    private ExcelExportService excelExportService;
 
     @Autowired
     public JobPostActivityController(UsersService usersService,
@@ -245,5 +249,29 @@ public class JobPostActivityController {
         model.addAttribute("jobPostActivity", jobPostActivity);
         model.addAttribute("user", usersService.getCurrentUserProfile());
         return "add-jobs";
+    }
+
+    @GetMapping("/dashboard/download-excel")
+    public ResponseEntity<InputStreamResource> downloadExcel() {
+        // role verification
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if(authentication == null || !authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
+        Users user = usersService.getCurrentUser();
+        List<RecruiterJobsDto> jobs = jobPostActivityService.getRecruiterJobs(user.getUserId());
+
+        ByteArrayInputStream in = excelExportService.exportRecruiterJobs(jobs);
+
+        // generating an HTTP response with a file
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Disposition", "attachment; filename=job_posts_report.xlsx");
+
+        return ResponseEntity
+                .ok() // HTTP status 200
+                .headers(headers) // attaches instructions
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")) // официальный "паспорт" файлов .xlsx
+                .body(new InputStreamResource(in));
     }
 }

@@ -1,4 +1,7 @@
-package com.project.jobportal.entity;
+package com.project.jobportal.dto;
+
+import com.project.jobportal.entity.JobCompany;
+import com.project.jobportal.entity.JobLocation;
 
 public class RecruiterJobsDto {
     private Long totalCandidates;

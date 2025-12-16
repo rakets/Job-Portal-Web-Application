@@ -1,5 +1,6 @@
 package com.project.jobportal.services;
 
+import com.project.jobportal.dto.RecruiterJobsDto;
 import com.project.jobportal.entity.*;
 import com.project.jobportal.repository.JobPostActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;

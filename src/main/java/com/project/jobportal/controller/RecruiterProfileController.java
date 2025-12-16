@@ -5,7 +5,6 @@ import com.project.jobportal.entity.Users;
 import com.project.jobportal.repository.UsersRepository;
 import com.project.jobportal.services.RecruiterProfileService;
 import com.project.jobportal.util.FileUploadUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -245,6 +245,7 @@
 
         <div class="box" sec:authorize="hasAuthority('Recruiter')">
             <h1 class="primary-title">Recruiter Dashboard</h1>
+            <button class="myBtn-light me-5" onclick="window.location.href='/dashboard/download-excel'">Download my posts</button>
         </div>
         <div class="box mt-3">
             <label class="large-label px-3 mb-3" sec:authorize="hasAuthority('Job Seeker')">Search Results</label>
