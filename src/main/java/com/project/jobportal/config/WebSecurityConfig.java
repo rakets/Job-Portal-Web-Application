@@ -37,7 +37,8 @@ public class WebSecurityConfig {
             "/*.css",
             "/*.js",
             "/*.js.map",
-            "/fonts**", "/favicon.ico", "/resources/**", "/error"};
+            "/fonts**", "/favicon.ico", "/resources/**", "/error",
+            "/job_portal/**", "/v3/api-docs/**", "/swagger-ui/**"}; //swagger
 
     @Bean
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
