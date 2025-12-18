@@ -1,7 +1,9 @@
 package com.project.jobportal.controller;
 
 import com.project.jobportal.services.NbpExchangeRateService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,9 +19,13 @@ public class HomeController {
         this.nbpExchangeRateService = nbpExchangeRateService;
     }
 
+    @Value("${spring.datasource.url}")
+    private String dataBaseUrl;
+
     @GetMapping("/")
     public String home(Model model) {
         getCurrencyRate(model);
+        System.out.println("current profile use database: " + dataBaseUrl);
         return "index";
     }
 
