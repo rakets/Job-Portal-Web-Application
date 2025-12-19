@@ -7,6 +7,10 @@ import com.project.jobportal.repository.UsersRepository;
 import com.project.jobportal.services.JobSeekerProfileService;
 import com.project.jobportal.util.FileDownloadUtil;
 import com.project.jobportal.util.FileUploadUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -41,6 +45,9 @@ public class JobSeekerProfileController {
         this.usersRepository = usersRepository;
     }
 
+    @Operation(summary = "Display job seeker profile page",
+            description = "Retrieves the current user's profile and skills. If no skills exist, initializes an empty list for the form.")
+    @ApiResponse(responseCode = "200", description = "Profile page loaded successfully", content = @Content(mediaType = "text/html"))
     @GetMapping("/")
     public String JobSeekerProfile(Model model) {
         JobSeekerProfile jobSeekerProfile = new JobSeekerProfile();
@@ -64,6 +71,13 @@ public class JobSeekerProfileController {
         return "job-seeker-profile";
     }
 
+    @Operation(summary = "Update job seeker profile",
+            description = "Saves profile details including skills and uploads profile photo and resume PDF to the server."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "302", description = "Profile updated successfully. Redirecting to dashboard."),
+            @ApiResponse(responseCode = "500", description = "Error occurred while saving files")
+    })
     @PostMapping("/addNew")
     public String addNew(JobSeekerProfile jobSeekerProfile,
                          @RequestParam("image") MultipartFile image,
@@ -112,6 +126,9 @@ public class JobSeekerProfileController {
         return "redirect:/dashboard/";
     }
 
+    @Operation(summary = "View specific candidate profile",
+            description = "Retrieves a public or recruiter-facing view of a candidate's profile by their ID.")
+    @ApiResponse(responseCode = "200", description = "Candidate profile found and displayed", content = @Content(mediaType = "text/html"))
     @GetMapping("/{id}")
     public String candidateProfile(@PathVariable("id") int id, Model model) {
         Optional<JobSeekerProfile> seekerProfile = jobSeekerProfileService.getOne(id);
@@ -119,6 +136,13 @@ public class JobSeekerProfileController {
         return "job-seeker-profile";
     }
 
+    @Operation(summary = "Download candidate resume",
+            description = "Downloads the stored PDF resume for a specific user from the server storage.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resume file retrieved successfully",
+                    content = @Content(mediaType = "application/octet-stream")),
+            @ApiResponse(responseCode = "404", description = "File not found")
+    })
     @GetMapping("/downloadResume")
     public ResponseEntity<?> downloadResume(@RequestParam(value = "fileName") String fileName,
                                             @RequestParam(value = "userID") String userId) {

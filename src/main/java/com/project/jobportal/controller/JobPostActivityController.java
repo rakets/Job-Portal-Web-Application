@@ -3,6 +3,11 @@ package com.project.jobportal.controller;
 import com.project.jobportal.dto.RecruiterJobsDto;
 import com.project.jobportal.entity.*;
 import com.project.jobportal.services.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
@@ -46,8 +51,10 @@ public class JobPostActivityController {
         this.jobSeekerSaveService = jobSeekerSaveService;
     }
 
+    @Operation(summary = "Dashboard page 'dashboard.html'", description = "Return dashboard page 'dashboard.html'")
+    @ApiResponse(responseCode = "200", description = "Page loaded successfully", content = @Content(mediaType = "text/html"))
     @GetMapping("/dashboard/")
-    public String searchJobs(Model model,
+    public String searchJobs( @Parameter(hidden = true) Model model,
                              @RequestParam(value = "job", required = false) String job,
                              @RequestParam(value = "location", required = false) String location,
                              @RequestParam(value = "partTime", required = false) String partTime,
@@ -156,6 +163,8 @@ public class JobPostActivityController {
         return "dashboard";
     }
 
+    @Operation(summary = "Global-search page 'global-search.html'", description = "Return global-search page 'global-search.html'")
+    @ApiResponse(responseCode = "200", description = "Page loaded successfully", content = @Content(mediaType = "text/html"))
     @GetMapping("global-search/")
     public String globalSearch(Model model,
                                @RequestParam(value = "job", required = false) String job,
@@ -224,15 +233,23 @@ public class JobPostActivityController {
         return "global-search";
     }
 
+    @Operation(summary = "Add-jobs page 'add-jobs.html'", description = "Return add-jobs page 'add-jobs.html'")
+    @ApiResponse(responseCode = "200", description = "Page loaded successfully", content = @Content(mediaType = "text/html"))
     @GetMapping("/dashboard/add")
-    public String addJob(Model model) {
+    public String addJob( @Parameter(hidden = true) Model model) {
         model.addAttribute("jobPostActivity", new JobPostActivity());
         model.addAttribute("user", usersService.getCurrentUserProfile());
         return "add-jobs";
     }
 
+    @Operation(summary = "Creating a new job",
+               description = "Accepts data from the form, assigns the current user as the author and redirects to the control panel.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "302", description = "Successful saving. Redirection to /dashboard/", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Input validation error")})
     @PostMapping("/dashboard/addNew")
-    public String addNew(JobPostActivity jobPostActivity, Model model) {
+    public String addNew(@Parameter(hidden = true) JobPostActivity jobPostActivity,
+                         @Parameter(hidden = true) Model model) {
         Users users = usersService.getCurrentUser();
         if (users != null) {
             jobPostActivity.setPostedById(users);
@@ -243,6 +260,11 @@ public class JobPostActivityController {
         return "redirect:/dashboard/";
     }
 
+    @Operation(summary = "Going to edit a vacancy",
+            description = "Extracts the data of an existing job by ID and displays the edit page 'add-jobs.html '")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "302", description = "Successful saving. Redirection to /dashboard/", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Input validation error")})
     @PostMapping("dashboard/edit/{id}")
     public String editJob(@PathVariable("id") int id, Model model) {
         JobPostActivity jobPostActivity = jobPostActivityService.getOne(id);
@@ -251,6 +273,14 @@ public class JobPostActivityController {
         return "add-jobs";
     }
 
+    @Operation(summary = "Export recruiter jobs to Excel",
+            description = "Generates and downloads an XLSX file containing all job postings for the currently authenticated recruiter. Access is restricted to users with the 'Recruiter' role.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Excel file generated successfully",
+                    content = @Content(mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")),
+            @ApiResponse(responseCode = "403", description = "Access Denied: User does not have the 'Recruiter' role",
+                    content = @Content)
+    })
     @GetMapping("/dashboard/download-excel")
     public ResponseEntity<InputStreamResource> downloadExcel() {
         // role verification

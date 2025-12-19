@@ -8,6 +8,11 @@ import com.project.jobportal.services.JobPostActivityService;
 import com.project.jobportal.services.JobSeekerProfileService;
 import com.project.jobportal.services.JobSeekerSaveService;
 import com.project.jobportal.services.UsersService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -74,9 +79,18 @@ public class JobSeekerSaveController {
 //        return "saved-jobs";
 //    }
 
+    @Operation(summary = "Save job to favorites",
+            description = "Links the specified job post to the authenticated Job Seeker's 'saved jobs' list for later viewing.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "302", description = "Job saved successfully. Redirecting to dashboard.", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Not Found: Either the Job Post or the User Profile does not exist"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized: User must be logged in to save jobs")
+    })
     @Transactional
     @PostMapping("job-details/save/{id}")
-    public String save(@PathVariable("id") int id, JobSeekerSave jobSeekerSave) {
+    public String save(@Parameter(description = "The unique ID of the job post", example = "10")
+                       @PathVariable("id") int id,
+                       @Parameter(hidden = true) JobSeekerSave jobSeekerSave) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
@@ -101,9 +115,12 @@ public class JobSeekerSaveController {
         return "redirect:/dashboard/";
     }
 
+    @Operation(summary = "View saved jobs list",
+            description = "Retrieves and displays all job posts that the current Job Seeker has previously saved.")
+    @ApiResponse(responseCode = "200", description = "Saved jobs page loaded successfully", content = @Content(mediaType = "text/html"))
     @Transactional
     @GetMapping("saved-jobs/")
-    public String savedJobs(Model model) {
+    public String savedJobs(@Parameter(hidden = true) Model model) {
         JobSeekerProfile currentUserProfile = (JobSeekerProfile) usersService.getCurrentUserProfile();
         List<JobPostActivity> jobPost = jobSeekerSaveService
                 .getCandidatesJob(currentUserProfile)
@@ -116,7 +133,4 @@ public class JobSeekerSaveController {
 
         return "saved-jobs";
     }
-
-
-
 }

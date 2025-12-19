@@ -4,6 +4,11 @@ import com.project.jobportal.entity.Users;
 import com.project.jobportal.entity.UsersType;
 import com.project.jobportal.services.UsersService;
 import com.project.jobportal.services.UsersTypeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -29,8 +34,11 @@ public class UsersController {
         this.usersService = usersService;
     }
 
+    @Operation(summary = "Display registration page",
+            description = "Loads the registration form and populates it with available user types (roles) retrieved from the database.")
+    @ApiResponse(responseCode = "200", description = "Registration page loaded successfully", content = @Content(mediaType = "text/html"))
     @GetMapping("/register")
-    public String register(Model model) {
+    public String register(@Parameter(hidden = true) Model model) {
         List<UsersType> usersTypes = usersTypeService.getAll();
         model.addAttribute("getAllTypes", usersTypes);
         model.addAttribute("user", new Users());
@@ -53,19 +61,32 @@ public class UsersController {
 //        return "dashboard";
 //    }
 
+    @Operation(summary = "Register a new user",
+            description = "Processes the registration form, validates user input, and saves the new user to the database before redirecting to the dashboard.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "302", description = "User successfully registered. Redirecting to dashboard.", content = @Content),
+            @ApiResponse(responseCode = "400", description = "Validation Error: Provided user data is invalid")
+    })
     @PostMapping("/register/new")
     public String userRegistration(@Valid Users users){
         usersService.addNew(users);
         return "redirect:/dashboard/";
     }
 
+    @Operation(summary = "Display login page", description = "Returns the standard login view for existing users.")
+    @ApiResponse(responseCode = "200", description = "Login page loaded successfully", content = @Content(mediaType = "text/html"))
     @GetMapping("/login")
     public String login(){
         return "login";
     }
 
+    @Operation(summary = "Logout user",
+            description = "Invalidates the current session, clears the security context, and redirects the user to the home page.")
+    @ApiResponse(responseCode = "302", description = "Successfully logged out. Redirecting to home page.", content = @Content)
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request, HttpServletResponse response){
+    public String logout(
+            @Parameter(hidden = true) HttpServletRequest request,
+            @Parameter(hidden = true) HttpServletResponse response){
         Authentication authentication = SecurityContextHolder.getContext()
                 .getAuthentication();
         if(authentication != null){

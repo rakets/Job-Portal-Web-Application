@@ -2,6 +2,10 @@ package com.project.jobportal.controller;
 
 import com.project.jobportal.entity.*;
 import com.project.jobportal.services.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -45,6 +49,17 @@ public class JobSeekerApplyController {
         this.notificationService = notificationService;
     }
 
+    @Operation(
+            summary = "Display job details page",
+            description = "Retrieves detailed information about a specific job post. " +
+                    "If a Recruiter is logged in, it shows the list of applicants. " +
+                    "If a Job Seeker is logged in, it checks if they have already applied for or saved this job."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Job details page loaded successfully",
+                    content = @Content(mediaType = "text/html")),
+            @ApiResponse(responseCode = "404", description = "Job post not found")
+    })
     @GetMapping("/job-details-apply/{id}")
     public String display(@PathVariable("id") int id, Model model) {
         JobPostActivity jobDetails = jobPostActivityService.getOne(id);
@@ -108,6 +123,20 @@ public class JobSeekerApplyController {
 //        }
 //        return "redirect:/dashboard/";
 //    }
+
+    @Operation(summary = "Apply for a job",
+            description = "Submits a job application for the authenticated Job Seeker. It links the user's profile to the specific job post, records the application date, and sends a notification to the responsible recruiter.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "302",
+                    description = "Application submitted successfully. Redirecting to the dashboard.",
+                    content = @Content),
+            @ApiResponse(responseCode = "401",
+                    description = "Unauthorized: User must be logged in to apply",
+                    content = @Content),
+            @ApiResponse(responseCode = "404",
+                    description = "Not Found: Job post or Seeker profile does not exist",
+                    content = @Content)
+    })
     @PostMapping("job-details/apply/{id}")
     public String apply(@PathVariable("id") int id, JobSeekerApply jobSeekerApply) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

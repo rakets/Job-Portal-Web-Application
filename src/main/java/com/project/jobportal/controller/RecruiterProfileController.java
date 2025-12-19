@@ -5,6 +5,12 @@ import com.project.jobportal.entity.Users;
 import com.project.jobportal.repository.UsersRepository;
 import com.project.jobportal.services.RecruiterProfileService;
 import com.project.jobportal.util.FileUploadUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,8 +38,11 @@ public class RecruiterProfileController {
         this.recruiterProfileService = recruiterProfileService;
     }
 
+    @Operation(summary = "Display recruiter profile page",
+            description = "Retrieves the profile data for the currently authenticated recruiter and prepares the 'recruiter_profile' view.")
+    @ApiResponse(responseCode = "200", description = "Recruiter profile page loaded successfully", content = @Content(mediaType = "text/html"))
     @GetMapping("/")
-    public String recruiterProfile(Model model) {
+    public String recruiterProfile(@Parameter(hidden = true) Model model) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(!(authentication instanceof AnonymousAuthenticationToken)){
             String currentUsername = authentication.getName();
@@ -47,10 +56,17 @@ public class RecruiterProfileController {
         return "recruiter_profile";
     }
 
-    @PostMapping("/addNew")
+    @Operation(summary = "Update recruiter profile info",
+            description = "Saves recruiter profile details and uploads a profile photo. Links the profile to the currently authenticated user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "302", description = "Profile successfully updated. Redirecting to dashboard.", content = @Content),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error: Failed to save the profile photo")
+    })
+    @PostMapping(value = "/addNew", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String addNew(RecruiterProfile recruiterProfile,
+                         @Parameter(description = "Recruiter's profile photo (image file)")
                          @RequestParam("image")MultipartFile multipartFile,
-                         Model model){
+                         @Parameter(hidden = true) Model model){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(!(authentication instanceof AnonymousAuthenticationToken)){
             String currentUsername = authentication.getName();
