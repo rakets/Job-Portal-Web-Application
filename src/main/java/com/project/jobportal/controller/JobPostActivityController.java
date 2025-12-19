@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.*;
@@ -31,6 +32,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Controller
+@Slf4j
 public class JobPostActivityController {
     private final UsersService usersService;
     private final JobPostActivityService jobPostActivityService;
@@ -67,6 +69,8 @@ public class JobPostActivityController {
                              @RequestParam(value = "days7", required = false) boolean days7,
                              @RequestParam(value = "days30", required = false) boolean days30) {
 
+        log.info("Searching jobs with criteria: job={}, location={}, today={}, days7={}, days30={}", job, location, today, days7, days30);
+
         model.addAttribute("partTime", Objects.equals(partTime, "Part-Time"));
         model.addAttribute("fullTime", Objects.equals(fullTime, "Full-Time"));
         model.addAttribute("freelance", Objects.equals(freelance, "Freelance"));
@@ -112,9 +116,11 @@ public class JobPostActivityController {
         }
         if(!dateSearchFlag && !remote && !type && !StringUtils.hasText(job) && !StringUtils.hasText(location)) {
             jobPost = jobPostActivityService.getAll();
+            log.debug("No filters applied, fetching all jobs. Total: {}", jobPost.size());
         } else {
             jobPost = jobPostActivityService.search(job, location, Arrays.asList(partTime, fullTime, freelance),
                     Arrays.asList(remoteOnly, officeOnly, partialRemote), searchDate);
+            log.debug("Filtered search returned {} jobs", jobPost.size());
         }
 
         Object currentUserProfile = usersService.getCurrentUserProfile();
@@ -123,9 +129,12 @@ public class JobPostActivityController {
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUserName = authentication.getName();
             model.addAttribute("username", currentUserName);
+            log.debug("Authenticated user: {}, Role: {}", currentUserName, authentication.getAuthorities());
+
             if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))) {
                 List<RecruiterJobsDto> recruiterJobs = jobPostActivityService.getRecruiterJobs(((RecruiterProfile) currentUserProfile).getUserAccountId());
                 model.addAttribute("jobPost", recruiterJobs);
+                log.info("Loaded {} jobs for recruiter {}", recruiterJobs.size(), currentUserName);
             } else {
                 List<JobSeekerApply> jobSeekerApplyList = jobSeekerApplyService.getCandidatesJobs((JobSeekerProfile) currentUserProfile);
                 List<JobSeekerSave> jobSeekerSaveList = jobSeekerSaveService.getCandidatesJob((JobSeekerProfile) currentUserProfile);
@@ -157,6 +166,7 @@ public class JobPostActivityController {
                     }
                     model.addAttribute("jobPost", jobPost);
                 }
+                log.info("Dashboard processed for JobSeeker: {}", currentUserName);
             }
         }
         model.addAttribute("user", currentUserProfile);
@@ -178,6 +188,8 @@ public class JobPostActivityController {
                                @RequestParam(value = "today", required = false) boolean today,
                                @RequestParam(value = "days7", required = false) boolean days7,
                                @RequestParam(value = "days30", required = false) boolean days30){
+
+        log.info("Global search initiated for job: '{}' in location: '{}'", job, location);
 
         model.addAttribute("partTime", Objects.equals(partTime, "Part-Time"));
         model.addAttribute("fullTime", Objects.equals(fullTime, "Full-Time"));
@@ -229,6 +241,7 @@ public class JobPostActivityController {
                     Arrays.asList(remoteOnly, officeOnly, partialRemote), searchDate);
         }
 
+        log.debug("Global search found {} results", jobPost != null ? jobPost.size() : 0);
         model.addAttribute("jobPost", jobPost);
         return "global-search";
     }
@@ -237,6 +250,7 @@ public class JobPostActivityController {
     @ApiResponse(responseCode = "200", description = "Page loaded successfully", content = @Content(mediaType = "text/html"))
     @GetMapping("/dashboard/add")
     public String addJob( @Parameter(hidden = true) Model model) {
+        log.info("Opening 'Add Job' page");
         model.addAttribute("jobPostActivity", new JobPostActivity());
         model.addAttribute("user", usersService.getCurrentUserProfile());
         return "add-jobs";
@@ -253,10 +267,14 @@ public class JobPostActivityController {
         Users users = usersService.getCurrentUser();
         if (users != null) {
             jobPostActivity.setPostedById(users);
+
+            log.info("Adding new job post by user: {}", users.getEmail());
         }
         jobPostActivity.setPostedDate(new Date());
         model.addAttribute("jobPostActivity", jobPostActivity);
         JobPostActivity saved = jobPostActivityService.addNew(jobPostActivity);
+
+        log.info("Job post successfully saved with ID: {}", saved.getJobPostId());
         return "redirect:/dashboard/";
     }
 
@@ -267,6 +285,8 @@ public class JobPostActivityController {
             @ApiResponse(responseCode = "400", description = "Input validation error")})
     @PostMapping("dashboard/edit/{id}")
     public String editJob(@PathVariable("id") int id, Model model) {
+        log.info("Editing job post with ID: {}", id);
+
         JobPostActivity jobPostActivity = jobPostActivityService.getOne(id);
         model.addAttribute("jobPostActivity", jobPostActivity);
         model.addAttribute("user", usersService.getCurrentUserProfile());
@@ -276,27 +296,31 @@ public class JobPostActivityController {
     @Operation(summary = "Export recruiter jobs to Excel",
             description = "Generates and downloads an XLSX file containing all job postings for the currently authenticated recruiter. Access is restricted to users with the 'Recruiter' role.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Excel file generated successfully",
-                    content = @Content(mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")),
-            @ApiResponse(responseCode = "403", description = "Access Denied: User does not have the 'Recruiter' role",
-                    content = @Content)
+            @ApiResponse(responseCode = "200", description = "Excel file generated successfully", content = @Content(mediaType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")),
+            @ApiResponse(responseCode = "403", description = "Access Denied: User does not have the 'Recruiter' role", content = @Content)
     })
     @GetMapping("/dashboard/download-excel")
     public ResponseEntity<InputStreamResource> downloadExcel() {
         // role verification
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication == null || !authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))){
+
+            log.warn("Unauthorized access attempt to download Excel. User: {}", (authentication != null) ? authentication.getName() : "Anonymous");
+
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
 
         Users user = usersService.getCurrentUser();
-        List<RecruiterJobsDto> jobs = jobPostActivityService.getRecruiterJobs(user.getUserId());
+        log.info("Generating Excel report for recruiter: {}", user.getEmail());
 
+        List<RecruiterJobsDto> jobs = jobPostActivityService.getRecruiterJobs(user.getUserId());
         ByteArrayInputStream in = excelExportService.exportRecruiterJobs(jobs);
 
         // generating an HTTP response with a file
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=job_posts_report.xlsx");
+
+        log.info("Excel report generated successfully for user: {}", user.getEmail());
 
         return ResponseEntity
                 .ok() // HTTP status 200

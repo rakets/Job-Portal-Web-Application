@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import java.util.List;
 
 @Controller
+@Slf4j
 public class UsersController {
     private final UsersTypeService usersTypeService;
     private final UsersService usersService;
@@ -39,9 +41,14 @@ public class UsersController {
     @ApiResponse(responseCode = "200", description = "Registration page loaded successfully", content = @Content(mediaType = "text/html"))
     @GetMapping("/register")
     public String register(@Parameter(hidden = true) Model model) {
+        log.info("Request to display registration page"); // Лог запроса страницы
+
         List<UsersType> usersTypes = usersTypeService.getAll();
         model.addAttribute("getAllTypes", usersTypes);
         model.addAttribute("user", new Users());
+
+        log.debug("Loaded {} user types for registration", usersTypes.size());
+
         return "register";
     }
 //          ???
@@ -69,7 +76,12 @@ public class UsersController {
     })
     @PostMapping("/register/new")
     public String userRegistration(@Valid Users users){
+        log.info("Attempting to register new user with email: {}", users.getEmail()); // Лог начала регистрации
+
         usersService.addNew(users);
+
+        log.info("User with email: {} successfully registered", users.getEmail()); // Лог успеха
+
         return "redirect:/dashboard/";
     }
 
@@ -77,6 +89,7 @@ public class UsersController {
     @ApiResponse(responseCode = "200", description = "Login page loaded successfully", content = @Content(mediaType = "text/html"))
     @GetMapping("/login")
     public String login(){
+        log.info("Request to display login page");
         return "login";
     }
 
@@ -90,6 +103,7 @@ public class UsersController {
         Authentication authentication = SecurityContextHolder.getContext()
                 .getAuthentication();
         if(authentication != null){
+            log.info("User {} is logging out", authentication.getName()); // лог выхода
             new SecurityContextLogoutHandler().logout(request, response, authentication);
         }
         return "redirect:/";

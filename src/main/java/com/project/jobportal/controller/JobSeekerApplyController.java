@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
+@Slf4j
 public class JobSeekerApplyController {
     private final JobPostActivityService jobPostActivityService;
     private final UsersService usersService;
@@ -62,16 +64,23 @@ public class JobSeekerApplyController {
     })
     @GetMapping("/job-details-apply/{id}")
     public String display(@PathVariable("id") int id, Model model) {
+        log.info("Displaying job details for job ID: {}", id);
+
         JobPostActivity jobDetails = jobPostActivityService.getOne(id);
         List<JobSeekerApply> jobSeekerApplyList = jobSeekerApplyService.getJobCandidates(jobDetails);
         List<JobSeekerSave> jobSeekerSaveList = jobSeekerSaveService.getJobCandidates(jobDetails);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            String currentUsername = authentication.getName();
+            log.debug("Authenticated user {} accessing job details {}", currentUsername, id);
+
             if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("Recruiter"))) {
                 RecruiterProfile user = recruiterProfileService.getCurrentRecruiterProfile();
                 if (user != null) {
                     model.addAttribute("applyList", jobSeekerApplyList);
+
+                    log.info("Recruiter {} is viewing applicants for job ID: {}", currentUsername, id);
                 }
             } else {
                 JobSeekerProfile user = jobSeekerProfileService.getCurrentSeekerProfile();
@@ -92,6 +101,8 @@ public class JobSeekerApplyController {
                     }
                     model.addAttribute("alreadyApplied", exists);
                     model.addAttribute("alreadySaved", saved);
+
+                    log.debug("JobSeeker {} status for job {}: applied={}, saved={}", currentUsername, id, exists, saved);
                 }
             }
         }
@@ -139,6 +150,8 @@ public class JobSeekerApplyController {
     })
     @PostMapping("job-details/apply/{id}")
     public String apply(@PathVariable("id") int id, JobSeekerApply jobSeekerApply) {
+        log.info("Job application attempt for Job ID: {}", id);
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             String currentUsername = authentication.getName();
@@ -154,12 +167,16 @@ public class JobSeekerApplyController {
                 jobSeekerApply.setId(null);
                 jobSeekerApplyService.addNew(jobSeekerApply); //сохранение
 
+                log.info("Application successfully saved for user: {} on job ID: {}", currentUsername, id);
+
                 // уведомление рекрутера ---
                 String candidateName = seekerProfile.get().getFirstName() + " " + seekerProfile.get().getLastName();
                 notificationService.notifyRecruiterOfNewApplication(jobPostActivity, candidateName);
+                log.debug("Notification sent to recruiter for job ID: {} from candidate: {}", id, candidateName);
                 // ----------------------------------------
 
             } else {
+                log.error("Failed to process application: User profile or Job post not found. User ID: {}, Job ID: {}", user.getUserId(), id);
                 throw new RuntimeException("User not found");
             }
         }

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +36,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("/job-seeker-profile")
+@Slf4j
 public class JobSeekerProfileController {
     private JobSeekerProfileService jobSeekerProfileService;
     private UsersRepository usersRepository;
@@ -50,6 +52,8 @@ public class JobSeekerProfileController {
     @ApiResponse(responseCode = "200", description = "Profile page loaded successfully", content = @Content(mediaType = "text/html"))
     @GetMapping("/")
     public String JobSeekerProfile(Model model) {
+        log.info("Accessing job seeker profile page");
+
         JobSeekerProfile jobSeekerProfile = new JobSeekerProfile();
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<Skills> skills = new ArrayList<>();
@@ -57,6 +61,10 @@ public class JobSeekerProfileController {
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             Users user = usersRepository.findByEmail(authentication.getName()).orElseThrow(()
                     -> new UsernameNotFoundException("User not found"));
+
+            String currentUserName = authentication.getName();
+            log.debug("Loading profile for user: {}", currentUserName);
+
             Optional<JobSeekerProfile> seekerProfile = jobSeekerProfileService.getOne(user.getUserId());
             if (seekerProfile.isPresent()) {
                 jobSeekerProfile = seekerProfile.get();
@@ -64,6 +72,9 @@ public class JobSeekerProfileController {
                     skills.add(new Skills());
                     jobSeekerProfile.setSkills(skills);
                 }
+                log.debug("Profile found for user: {}, skills count: {}", currentUserName, jobSeekerProfile.getSkills().size());
+            } else {
+                log.warn("No profile record found in DB for user: {}", currentUserName);
             }
             model.addAttribute("skills", skills);
             model.addAttribute("profile", jobSeekerProfile);
@@ -90,6 +101,8 @@ public class JobSeekerProfileController {
                     -> new UsernameNotFoundException("User not found"));
             jobSeekerProfile.setUsersId(user);
             jobSeekerProfile.setUserAccountId(user.getUserId());
+
+            log.info("Updating profile for user: {}", user.getEmail());
         }
         List<Skills> skillsList = new ArrayList<>();
         model.addAttribute("profile", jobSeekerProfile);
@@ -105,21 +118,32 @@ public class JobSeekerProfileController {
         if (!Objects.equals(image.getOriginalFilename(), "")) {
             imageName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
             jobSeekerProfile.setProfilePhoto(imageName);
+
+            log.debug("New profile image detected: {}", imageName);
         }
         if (!Objects.equals(pdf.getOriginalFilename(), "")) {
             resumeName = StringUtils.cleanPath(Objects.requireNonNull(pdf.getOriginalFilename()));
             jobSeekerProfile.setResume(resumeName);
+
+            log.debug("New resume file detected: {}", resumeName);
         }
         JobSeekerProfile seekerProfile = jobSeekerProfileService.addNew(jobSeekerProfile);
+        log.info("Profile data saved to database for user ID: {}", jobSeekerProfile.getUserAccountId());
+
         try {
             String uploadDir = "photos/candidate/" + jobSeekerProfile.getUserAccountId();
             if (!Objects.equals(image.getOriginalFilename(), "")) {
                 FileUploadUtil.saveFile(uploadDir, imageName, image);
+
+                log.info("Image file uploaded successfully to: {}", uploadDir);
             }
             if (!Objects.equals(pdf.getOriginalFilename(), "")) {
                 FileUploadUtil.saveFile(uploadDir, resumeName, pdf);
+
+                log.info("Resume file uploaded successfully to: {}", uploadDir);
             }
         } catch (Exception e) {
+            log.error("Error occurred while saving files for user {}: {}", jobSeekerProfile.getUserAccountId(), e.getMessage());
             throw new RuntimeException(e);
         }
 
@@ -131,6 +155,8 @@ public class JobSeekerProfileController {
     @ApiResponse(responseCode = "200", description = "Candidate profile found and displayed", content = @Content(mediaType = "text/html"))
     @GetMapping("/{id}")
     public String candidateProfile(@PathVariable("id") int id, Model model) {
+        log.info("Viewing candidate profile with ID: {}", id);
+
         Optional<JobSeekerProfile> seekerProfile = jobSeekerProfileService.getOne(id);
         model.addAttribute("profile", seekerProfile.get());
         return "job-seeker-profile";
@@ -146,16 +172,24 @@ public class JobSeekerProfileController {
     @GetMapping("/downloadResume")
     public ResponseEntity<?> downloadResume(@RequestParam(value = "fileName") String fileName,
                                             @RequestParam(value = "userID") String userId) {
+        log.info("Resume download request: file={}, userId={}", fileName, userId);
+
         FileDownloadUtil fileDownloadUtil = new FileDownloadUtil();
         Resource resource = null;
         try {
             resource = fileDownloadUtil.getFileAsResourse("photos/candidate/" + userId, fileName);
         } catch (IOException e) {
+            log.error("IO Exception during resume download for user {}: {}", userId, e.getMessage());
+
             return ResponseEntity.badRequest().build();
         }
         if (resource == null) {
+            log.warn("Resume file not found: photos/candidate/{}/{}", userId, fileName);
+
             return new ResponseEntity<>("File not found", HttpStatus.NOT_FOUND);
         }
+        log.info("File {} successfully found and starting download", fileName);
+
         String contentType = "application/octet-stream";
         String headerValue = "attachment; filename=\"" + resource.getFilename() + "\"";
 
