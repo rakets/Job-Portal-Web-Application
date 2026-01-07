@@ -18,11 +18,11 @@ public class ExcelExportService {
         try (Workbook workbook = new XSSFWorkbook();
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
-            Sheet sheet = workbook.createSheet("Мои вакансии");
+            Sheet sheet = workbook.createSheet("My vacancies");
 
             // creating the header header
             Row headerRow = sheet.createRow(0);
-            String[] columns = {"ID", "Название вакансии", "Компания", "Локация", "Кол-во кандидатов"};
+            String[] columns = {"ID", "Job title", "Company", "Location", "Number of candidates"};
 
             // header style
             CellStyle headerCellStyle = workbook.createCellStyle();

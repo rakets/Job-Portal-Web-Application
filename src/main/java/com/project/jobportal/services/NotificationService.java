@@ -57,7 +57,7 @@ public class NotificationService {
         log.debug("WS: Job ID={} belongs to recruiter: {}", job.getJobPostId(), recruiterEmail);
         System.out.println(">>> WS: Vacancy ID=" + job.getJobPostId() + " belongs: " + recruiterEmail);
 
-        String content = "Новый отклик от " + candidateName + " на вакансию: " + job.getJobTitle();
+        String content = "New apply from " + candidateName + " to the vacancy: " + job.getJobTitle();
         NotificationDTO notification = new NotificationDTO(
                 content,
                 "NEW_APPLY",

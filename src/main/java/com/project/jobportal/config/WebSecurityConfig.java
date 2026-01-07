@@ -45,6 +45,8 @@ public class WebSecurityConfig {
     protected SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authenticationProvider(authenticationProvider());
 
+//        http.httpBasic(Customizer.withDefaults()); //для basic auth в postman
+
         http.authorizeHttpRequests(auth->{
             auth.requestMatchers(publicUrl).permitAll();
             auth.anyRequest().authenticated();
