@@ -17,15 +17,10 @@
 
 ## 📑 Table of Contents
 * [Screenshots](#-screenshots)
-* [Privacy First](#-privacy-first)
-* [Key Features](#-key-features)
 * [Tech Stack](#-tech-stack)
-* [Performance & Quality](#-performance--quality)
-* [Installation and Setup](#-installation-and-setup)
-* [Build and Deploy](#-build-and-deploy)
-* [How to Install on Phone (PWA)](#-how-to-install-on-phone-pwa)
+* [How to Run the Project](#-how-to-run-the-project)
 * [Project Structure](#-project-structure)
-* [License](#-license)
+* [Database Structure](#-database-structure)
 
 ---
 
@@ -84,5 +79,5 @@
 | <img src="./docs/project structure_7.png" width="180" alt="project structure" /> | <img src="./docs/project structure_8.png" width="180" alt="project structure" /> |
 
 ---
-## 📂 General view of the database structure
-<img src="./docs/database structure.png" width="180" alt="Database Structure" />
+## 📂 Database structure
+<img src="./docs/database structure.png" width="100" alt="Database Structure" />
