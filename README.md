@@ -102,15 +102,9 @@
   <img src="./docs/project-structure-1.png" width="230"/>
   <img src="./docs/project-structure-2.png" width="230"/>
   <img src="./docs/project-structure-3.png" width="230"/>
-</p>
-
-<p align="center">
   <img src="./docs/project-structure-4.png" width="230"/>
   <img src="./docs/project-structure-5.png" width="230"/>
   <img src="./docs/project-structure-6.png" width="230"/>
-</p>
-
-<p align="center">
   <img src="./docs/project-structure-7.png" width="230"/>
   <img src="./docs/project-structure-8.png" width="230"/>
 </p>
