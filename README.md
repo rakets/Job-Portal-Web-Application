@@ -1,14 +1,16 @@
 # Job Portal Web Application
 
-![Java]
-![Apache-Maven]
-![Spring]
-![MySQL]
-![Thymeleaf]
-![HTML]
-![CSS]
-![JavaScript]
-![Bootstrap]
+<p align="center">
+    ![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
+    ![Maven](https://img.shields.io/badge/Maven-3.9+-C71A36?style=for-the-badge&logo=apachemaven)
+    ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4-green?style=for-the-badge&logo=springboot)
+    ![MySQL](https://img.shields.io/badge/MySQL-8-blue?style=for-the-badge&logo=mysql)
+    ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-Template-darkgreen?style=for-the-badge&logo=thymeleaf)
+    ![HTML](https://img.shields.io/badge/HTML-5-E34F26?style=for-the-badge&logo=html5)
+    ![CSS](https://img.shields.io/badge/CSS-3-1572B6?style=for-the-badge&logo=css3)
+    ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=for-the-badge&logo=javascript)
+    ![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?style=for-the-badge&logo=bootstrap)
+</p>
 
 
 **Job Portal Web Application** — this project is a website for finding a job.
@@ -98,23 +100,27 @@
 ## 📂 Project Structure
 
 <p align="center">
-  <img src="./docs/project-structure-1.png" width="230"/>
-  <img src="./docs/project-structure-2.png" width="230"/>
-  <img src="./docs/project-structure-3.png" width="230"/>
+  <img src="./docs/project structure_1.png" width="230"/>
+  <img src="./docs/project structure_2.png" width="230"/>
+  <img src="./docs/project structure_3.png" width="230"/>
 </p>
 
 <p align="center">
-  <img src="./docs/project-structure-4.png" width="230"/>
-  <img src="./docs/project-structure-5.png" width="230"/>
-  <img src="./docs/project-structure-6.png" width="230"/>
+  <img src="./docs/project structure_4.png" width="230"/>
+  <img src="./docs/project structure_5.png" width="230"/>
+  <img src="./docs/project structure_6.png" width="230"/>
 </p>
 
 <p align="center">
-  <img src="./docs/project-structure-7.png" width="230"/>
-  <img src="./docs/project-structure-8.png" width="230"/>
+  <img src="./docs/project structure_7.png" width="230"/>
+  <img src="./docs/project structure_8.png" width="230"/>
 </p>
 
 ---
 
 ## 📂 Database structure
-<img src="./docs/database structure.png" width="100" alt="Database Structure" />
+<p align="center">
+  <a href="./docs/database structure.png">
+    <img src="./docs/database structure.png" width="600"/>
+  </a>
+</p>
