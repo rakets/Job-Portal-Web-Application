@@ -1,16 +1,14 @@
 # Job Portal Web Application
 
-<p align="center">
-    ![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
-    ![Maven](https://img.shields.io/badge/Maven-3.9+-C71A36?style=for-the-badge&logo=apachemaven)
-    ![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4-green?style=for-the-badge&logo=springboot)
-    ![MySQL](https://img.shields.io/badge/MySQL-8-blue?style=for-the-badge&logo=mysql)
-    ![Thymeleaf](https://img.shields.io/badge/Thymeleaf-Template-darkgreen?style=for-the-badge&logo=thymeleaf)
-    ![HTML](https://img.shields.io/badge/HTML-5-E34F26?style=for-the-badge&logo=html5)
-    ![CSS](https://img.shields.io/badge/CSS-3-1572B6?style=for-the-badge&logo=css3)
-    ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=for-the-badge&logo=javascript)
-    ![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?style=for-the-badge&logo=bootstrap)
-</p>
+![Java](https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk)
+![Maven](https://img.shields.io/badge/Maven-4.0.0-C71A36?style=for-the-badge&logo=apachemaven)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3.4.10-green?style=for-the-badge&logo=springboot)
+![MySQL](https://img.shields.io/badge/MySQL-8-blue?style=for-the-badge&logo=mysql)
+![Thymeleaf](https://img.shields.io/badge/Thymeleaf-Template-darkgreen?style=for-the-badge&logo=thymeleaf)
+![HTML](https://img.shields.io/badge/HTML-5-E34F26?style=for-the-badge&logo=html5)
+![CSS](https://img.shields.io/badge/CSS-3-1572B6?style=for-the-badge&logo=css3)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=for-the-badge&logo=javascript)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?style=for-the-badge&logo=bootstrap)
 
 
 **Job Portal Web Application** — this project is a website for finding a job.
@@ -31,9 +29,9 @@
 ### 🏠 Main Pages
 
 <p align="center">
-  <img src="./docs/Home Page.png" width="220"/>
-  <img src="./docs/Login Page.png" width="220"/>
-  <img src="./docs/Registation Page.png" width="220"/>
+  <img src="./docs/Home Page.png" width="230"/>
+  <img src="./docs/Login Page.png" width="230"/>
+  <img src="./docs/Registation Page.png" width="230"/>
 </p>
 
 ---
@@ -41,10 +39,10 @@
 ### 👔 Recruiter Profile
 
 <p align="center">
-  <img src="./docs/Recruiter Dashboard Page.png" width="220"/>
-  <img src="./docs/Recruiter Job Details Page.png" width="220"/>
-  <img src="./docs/Post New Job Page.png" width="220"/>
-  <img src="./docs/Edit Recruiter Profile Data Page.png" width="220"/>
+  <img src="./docs/Recruiter Dashboard Page.png" width="230"/>
+  <img src="./docs/Recruiter Job Details Page.png" width="230"/>
+  <img src="./docs/Post New Job Page.png" width="230"/>
+  <img src="./docs/Edit Recruiter Profile Data Page.png" width="230"/>
 </p>
 
 ---
@@ -52,10 +50,10 @@
 ### 👤 Candidate Profile
 
 <p align="center">
-  <img src="./docs/Candidate Dashboard Page.png" width="220"/>
-  <img src="./docs/Saved Job Page.png" width="220"/>
-  <img src="./docs/Edit Candidate Profile Data Page.png" width="220"/>
-  <img src="./docs/Candidate Job Details Page.png" width="220"/>
+  <img src="./docs/Candidate Dashboard Page.png" width="230"/>
+  <img src="./docs/Saved Job Page.png" width="230"/>
+  <img src="./docs/Edit Candidate Profile Data Page.png" width="230"/>
+  <img src="./docs/Candidate Job Details Page.png" width="230"/>
 </p>
 
 ---
