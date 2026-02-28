@@ -12,7 +12,7 @@
 <img src="https://img.shields.io/badge/Bootstrap-5-7952B3?style=for-the-badge&logo=bootstrap" alt="Bootstrap" />
 </p>
 
-**Job Portal Web Application** — this project is a website for finding a job.
+**Job Portal Web Application** is a platform that helps users search for jobs and manage applications.
 
 ---
 
