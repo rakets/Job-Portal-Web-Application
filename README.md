@@ -26,15 +26,35 @@
 
 ## 📸 Screenshots
 
-| Home Page | Login Page | Registation Page | |
-| | | | |
-| <img src="./docs/Home Page.png" width="180" alt="Home Page" /> | <img src="./docs/Login Page.png" width="180" alt="Login Page" /> | <img src="./docs/Registation Page.png" width="180" alt="Registation Page" /> |
-| Recruiter Dashboard Page | Recruiter Job Details Page | Post New Job Page | Edit Recruiter Profile Data Page | 
-| | | | |
-| <img src="./docs/Recruiter Dashboard Page.png" width="180" alt="Recruiter Dashboard Page" /> | <img src="./docs/Recruiter Job Details Page.png" width="180" alt="Recruiter Job Details Page" /> | <img src="./docs/Post New Job Page.png" width="180" alt="Post New Job Page" /> | <img src="./docs/Edit Recruiter Profile Data Page.png" width="180" alt="Edit Recruiter Profile Data Page" /> |
-| | | | |
-| Candidate Dashboard Page | Saved Job Page | Edit Candidate Profile Data Page | Candidate Job Details Page |
-| <img src="./docs/Candidate Dashboard Page.png" width="180" alt="Candidate Dashboard Page" /> | <img src="./docs/Saved Job Page.png" width="180" alt="Saved Job Page" /> | <img src="./docs/Edit Candidate Profile Data Page.png" width="180" alt="Edit Candidate Profile Data Page" /> | <img src="./docs/Candidate Job Details Page.png" width="180" alt="Candidate Job Details Page" /> |
+### 🏠 Main Pages
+
+<p align="center">
+  <img src="./docs/Home Page.png" width="220"/>
+  <img src="./docs/Login Page.png" width="220"/>
+  <img src="./docs/Registation Page.png" width="220"/>
+</p>
+
+---
+
+### 👔 Recruiter Profile
+
+<p align="center">
+  <img src="./docs/Recruiter Dashboard Page.png" width="220"/>
+  <img src="./docs/Recruiter Job Details Page.png" width="220"/>
+  <img src="./docs/Post New Job Page.png" width="220"/>
+  <img src="./docs/Edit Recruiter Profile Data Page.png" width="220"/>
+</p>
+
+---
+
+### 👤 Candidate Profile
+
+<p align="center">
+  <img src="./docs/Candidate Dashboard Page.png" width="220"/>
+  <img src="./docs/Saved Job Page.png" width="220"/>
+  <img src="./docs/Edit Candidate Profile Data Page.png" width="220"/>
+  <img src="./docs/Candidate Job Details Page.png" width="220"/>
+</p>
 
 ---
 
@@ -76,12 +96,23 @@
 ---
 
 ## 📂 Project Structure
-|:---:|:---:|:---:|
-| <img src="./docs/project structure_1.png" width="180" alt="project structure" /> | <img src="./docs/project structure_2.png" width="180" alt="project structure" /> | <img src="./docs/project structure_3.png" width="180" alt="project structure_1" /> |
-|:---:|:---:|:---:|
-| <img src="./docs/project structure_4.png" width="180" alt="project structure" /> | <img src="./docs/project structure_5.png" width="180" alt="project structure" /> | <img src="./docs/project structure_6.png" width="180" alt="project structure_1" /> |
-|:---:|:---:|:---:|
-| <img src="./docs/project structure_7.png" width="180" alt="project structure" /> | <img src="./docs/project structure_8.png" width="180" alt="project structure" /> |
+
+<p align="center">
+  <img src="./docs/project-structure-1.png" width="230"/>
+  <img src="./docs/project-structure-2.png" width="230"/>
+  <img src="./docs/project-structure-3.png" width="230"/>
+</p>
+
+<p align="center">
+  <img src="./docs/project-structure-4.png" width="230"/>
+  <img src="./docs/project-structure-5.png" width="230"/>
+  <img src="./docs/project-structure-6.png" width="230"/>
+</p>
+
+<p align="center">
+  <img src="./docs/project-structure-7.png" width="230"/>
+  <img src="./docs/project-structure-8.png" width="230"/>
+</p>
 
 ---
 
