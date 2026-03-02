@@ -2,7 +2,7 @@
 
 <p align="center">
 <img src="https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=openjdk" alt="Java" />
-<img src="https://img.shields.io/badge/Maven-4.0.0+-C71A36?style=for-the-badge&logo=apachemaven" alt="Maven" />
+<img src="https://img.shields.io/badge/Maven-4.0.0-C71A36?style=for-the-badge&logo=apachemaven" alt="Maven" />
 <img src="https://img.shields.io/badge/Spring_Boot-3.4.10-green?style=for-the-badge&logo=springboot" alt="Spring Boot" />
 <img src="https://img.shields.io/badge/MySQL-8-blue?style=for-the-badge&logo=mysql" alt="MySQL" />
 <img src="https://img.shields.io/badge/Thymeleaf-Template-darkgreen?style=for-the-badge&logo=thymeleaf" alt="Thymeleaf" />
@@ -17,11 +17,21 @@
 ---
 
 ## 📑 Table of Contents
-* [Screenshots](#-screenshots)
 * [Tech Stack](#-tech-stack)
+* [Screenshots](#-screenshots)
 * [How to Run the Project](#-how-to-run-the-project)
 * [Project Structure](#-project-structure)
 * [Database Structure](#-database-structure)
+
+---
+
+## 🏗 Tech Stack
+
+* **Java:** 21
+* **Spring Boot:** 3.4.10
+* **Apache-Maven:** 4.0.0
+* **Database:** MySQL
+* **Frontend:** Thymeleaf, HTML, CSS, JavaScript, Bootstrap 
 
 ---
 
@@ -56,16 +66,6 @@
   <img src="./docs/edit-candidate-profile-data-page.png" width="230"/>
   <img src="./docs/candidate-job-details-page.png" width="230"/>
 </p>
-
----
-
-## 🏗 Tech Stack
-
-* **Java:** 21
-* **Spring Boot:** 3.4.10
-* **Apache-Maven:** 4.0.0
-* **Database:** MySQL
-* **Frontend:** Thymeleaf, HTML, CSS, JavaScript, Bootstrap 
 
 ---
 
